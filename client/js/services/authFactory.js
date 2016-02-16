@@ -1,0 +1,43 @@
+angular.module('app')
+
+.factory('AuthService', ['User', '$q', '$rootScope',  function(User, $q, $rootScope) {
+
+  function register(email, password) {
+    return User
+      .create({
+       email: email,
+       password: password
+     })
+     .$promise;
+  }
+  
+  function login(email, password) {
+    return User
+      .login({email: email, password: password})
+      .$promise
+      .then(function(response) {
+        $rootScope.currentUser = {
+          id: response.user.id,
+          tokenId: response.id,
+          email: email
+        };
+      });
+  }
+  
+  function logout() {
+    return User
+    .logout()
+    .$promise
+    .then(function() {
+      $rootScope.currentUser = null;
+    });
+  }
+
+  
+  return {
+    register: register,
+    login: login,
+    logout: logout
+  };
+  
+}]);
